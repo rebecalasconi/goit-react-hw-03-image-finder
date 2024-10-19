@@ -1,40 +1,51 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
-const Searchbar = ({ onSubmit }) => {
-    const [query, setQuery] = useState(''); // Folosim useState pentru a gestiona input-ul
+class Searchbar extends Component {
+  state = {
+    query: '',
+  };
 
-    // Actualizează starea locală când utilizatorul tastează în input
-    const handleChange = (event) => {
-        setQuery(event.target.value);
-    };
+  handleChange = event => {
+    this.setState({ query: event.currentTarget.value.toLowerCase() });
+  };
 
-    // Gestionează submit-ul formularului
-    const handleSubmit = (event) => {
-        event.preventDefault(); // Previne comportamentul implicit al formularului
-        onSubmit(query); // Trimite query-ul către componenta părinte
-        setQuery(''); // Resetează câmpul de input
-    };
+  handleSubmit = event => {
+    event.preventDefault();
+    if (this.state.query.trim() === '') {
+      alert('Please enter a search query');
+      return;
+    }
 
+    this.props.onSubmit(this.state.query);
+    this.setState({ query: '' });
+  };
+
+  render() {
     return (
-        <header className="searchbar">
-            <form className="form" onSubmit={handleSubmit}>
-                <button type="submit" className="button">
-                    <span className="button-label">Search</span>
-                </button>
+      <header className="searchbar">
+        <form className="form" onSubmit={this.handleSubmit}>
+          <button type="submit" className="button">
+            <span className="button-label">Search</span>
+          </button>
 
-                <input
-                    className="input"
-                    type="text"
-                    value={query} // Valoarea câmpului de input
-                    onChange={handleChange} // Apelează funcția la schimbarea input-ului
-                    autoComplete="off" // Dezactivează completarea automată
-                    autoFocus // Activează input-ul imediat
-                    placeholder="Search images and photos" // Textul de umplere
-                />
-            </form>
-        </header>
+          <input
+            className="input"
+            type="text"
+            value={this.state.query}
+            onChange={this.handleChange}
+            autoComplete="off"
+            autoFocus
+            placeholder="Search images and photos"
+          />
+        </form>
+      </header>
     );
-};
+  }
+}
 
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};
 
 export default Searchbar;

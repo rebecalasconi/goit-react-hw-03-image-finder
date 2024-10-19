@@ -1,13 +1,7 @@
 import React from 'react';
 
-const Button = ({ onLoadMore, isVisible }) => {
-    if(!isVisible) {
-        return null;
-    }
-
-    return (
-            <button type='button' onClick={onLoadMore}>Load more</button>
-    )
-}
+const Button = ({ onClick }) => (
+    <button type='button' onClick={onClick}>Load more</button>
+)
 
 export default Button;

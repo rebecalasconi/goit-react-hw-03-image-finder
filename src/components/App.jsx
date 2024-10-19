@@ -4,36 +4,51 @@ import Searchbar from './Searchbar';
 import ImageGallery from './ImageGallery';
 import { Hourglass } from 'react-loader-spinner'
 import Button from './Button';
+import Modal from './Modal';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchTerm: '',
+            searchQuery: '',
             images: [],
             page: 1,
+            showModal: false,
+            selectedImage: null,
             totalHits: 0,
             isLoading: false
         };
+        this.scrollToBottom = this.scrollToBottom.bind(this);
+
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      const { searchQuery, page } = this.state;
+      if(prevState.searchQuery !== searchQuery || prevState.page !== page) {
+        this.fetchImages();
+      }
+
+      if(prevState.images.length !== this.state.images.length) {
+        this.scrollToBottom();
+      }
     }
 
     // Funcția care gestionează submit-ul din Searchbar
-    handleSearchSubmit = (term) => {
-        this.setState({ searchTerm: term, images: [], page: 1 }, this.fetchImages);
+    handleSearchSubmit = query => {
+        this.setState({ searchQuery: query, images: [], page: 1 });
     };
 
     // Funcția pentru a căuta imagini folosind API-ul
     fetchImages = async () => {
-        const { searchTerm, page } = this.state;
-        if (!searchTerm) return;
+        const { searchQuery, page } = this.state;
 
         try {
           this.setState({ isLoading: true });
-            const response = await axios.get(`https://pixabay.com/api/?q=${searchTerm}&page=${page}&key=45694916-26d3469d9465de46d8eb67fae&image_type=photo&orientation=horizontal&per_page=12`);
+            const response = await axios.get(`https://pixabay.com/api/?q=${searchQuery}&page=${page}&key=45694916-26d3469d9465de46d8eb67fae&image_type=photo&orientation=horizontal&per_page=12`);
             this.setState((prevState) => ({
                 images: [...prevState.images, ...response.data.hits],
                 totalHits: response.data.totalHits,
-                page: prevState.page + 1,
+                //page: prevState.page + 1,
             }));
         } catch (error) {
             console.error('Error fetching images:', error);
@@ -42,10 +57,28 @@ class App extends React.Component {
         }
     };
 
-    render() {
-        const { images, totalHits, isLoading } = this.state;
-        const showLoadMoreButton = images.length > 0 && images.length < totalHits; // Verificăm dacă butonul trebuie să fie afișat
+      // Funcția care deschide modalul când se dă click pe o imagine
+  handleImageClick = largeImageURL => {
+    this.setState({ selectedImage: largeImageURL, showModal: true });
+  };
 
+  // Funcția care închide modalul
+  closeModal = () => {
+    this.setState({ showModal: false, selectedImage: null });
+  };
+
+  handleLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
+
+  scrollToBottom() {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+
+    render() {
+        const { images, isLoading, selectedImage, totalHits, showModal } = this.state;
+        const isVisible = images.length > 0 && images.length < totalHits;
         if(isLoading) {
           return <Hourglass
           visible={true}
@@ -62,7 +95,12 @@ class App extends React.Component {
             <div>
                 <Searchbar onSubmit={this.handleSearchSubmit} />
                 <ImageGallery images={images} />
-                <Button onLoadMore={this.fetchImages} isVisible={showLoadMoreButton} />
+                {isVisible && !isLoading &&
+                <Button onClick={this.handleLoadMore} />
+                }
+                {showModal && (
+                <Modal largeImageURL={selectedImage} onClose={this.closeModal} />
+                )}
             </div>
         );
     }
