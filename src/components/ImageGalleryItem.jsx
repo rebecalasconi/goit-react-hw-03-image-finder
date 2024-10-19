@@ -2,10 +2,10 @@ import React from 'react';
 //import PropTypes from 'prop-types';
 //import styles from './FriendList.module.css';
 
-const ImageGalleryItem = ({ id, webformatURL, largeImageURL }) => {
+const ImageGalleryItem = ({ webformatURL, largeImageURL, alt }) => {
   return (
     <li>
-      <img src={webformatURL} alt={`text`} />
+      <img src={webformatURL} alt={alt} onClick={() => window.open(largeImageURL, '_blank')} />
     </li>
   );
 }

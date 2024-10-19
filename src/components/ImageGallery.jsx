@@ -3,12 +3,15 @@ import ImageGalleryItem from "./ImageGalleryItem";
 //import PropTypes from 'prop-types';
 //import styles from './App.module.css'
 
-const ImageGallery = ({ cards }) => {
+const ImageGallery = ({ images }) => {
     return (
         <ul>
-        {cards.map(card => (
+        {images.map(image => (
           <ImageGalleryItem
-            key={card.id}
+            key={image.id}
+            webformatURL={image.webformatURL}
+            largeImageURL={image.largeImageURL}
+            alt={image.tags}
           />
         ))}
       </ul>
@@ -17,7 +20,7 @@ const ImageGallery = ({ cards }) => {
     
 
 
-//ContactItem.propTypes = {
+//ImageGallery.propTypes = {
 //   name: PropTypes.string.isRequired,
  //   number: PropTypes.string.isRequired,
  //   };
