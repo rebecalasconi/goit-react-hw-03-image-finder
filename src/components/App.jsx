@@ -1,3 +1,9 @@
+import React from "react";
+import ImageGallery from "./ImageGallery";
+import ImageGalleryItem from "./ImageGalleryItem";
+import Searchbar from "./Searchbar";
+
+
 export const App = () => {
   return (
     <div
@@ -10,6 +16,9 @@ export const App = () => {
         color: '#010101'
       }}
     >
+      <ImageGallery/>
+       <ImageGalleryItem/>
+       <Searchbar/>
       React homework template
     </div>
   );
