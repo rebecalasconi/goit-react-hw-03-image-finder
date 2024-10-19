@@ -5,6 +5,7 @@ import ImageGallery from './ImageGallery';
 import { Hourglass } from 'react-loader-spinner'
 import Button from './Button';
 import Modal from './Modal';
+import './styles.css'
 
 class App extends React.Component {
     constructor(props) {
@@ -28,7 +29,7 @@ class App extends React.Component {
         this.fetchImages();
       }
 
-      if(prevState.images.length !== this.state.images.length) {
+      if(prevState.images.length !== this.state.images.length && prevState.images.length !== 0) {
         this.scrollToBottom();
       }
     }
@@ -92,9 +93,9 @@ class App extends React.Component {
         }
 
         return (
-            <div>
+            <div className='App'>
                 <Searchbar onSubmit={this.handleSearchSubmit} />
-                <ImageGallery images={images} />
+                <ImageGallery images={images} onImageClick={this.handleImageClick} />
                 {isVisible && !isLoading &&
                 <Button onClick={this.handleLoadMore} />
                 }
